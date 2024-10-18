@@ -54,7 +54,6 @@ for k=1:120
 
     for i=2:4;
         [qi, rho(i,k+1)] = nextrho(rho(i,k), qi, 0, v(i, k));
-        qi
         v(i, k+1) = nextv(v(i, k), v(i-1,k), rho(i+1, k), rho(i, k), 120);
     end
 
@@ -62,4 +61,14 @@ for k=1:120
     v(5, k+1) = nextv(v(5, k), v(5-1,k), rho(5, k), rho(5,k), 120);
 end
 
-plot(rho)
+%plotting
+figure()
+hold on
+for i=1:5
+    plot(v(i,:))
+end
+figure()
+hold on
+for i=1:5
+    plot(rho(i,:))
+end
