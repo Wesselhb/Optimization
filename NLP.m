@@ -63,12 +63,22 @@ end
 
 %plotting
 figure()
+title('Velocity')
+xlabel('Time')
+ylabel('Velocity')
 hold on
 for i=1:5
     plot(v(i,:))
 end
+legend('Segment 1', 'Segment 2', 'Segment 3', 'Segment 4', 'Segment 5')
+
+
 figure()
+title('density')
+xlabel('Time')
+ylabel('density')
 hold on
 for i=1:5
     plot(rho(i,:))
 end
+legend('Segment 1', 'Segment 2', 'Segment 3', 'Segment 4', 'Segment 5')
