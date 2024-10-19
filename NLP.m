@@ -6,7 +6,7 @@ E2 = Da(2) + Db(2);
 E3 = Da(3) + Db(3);
 
 % Constants
-global TAU MU Cr RHOm ALPHA K A Vf RHOc T L LAMBDA RHOc;
+global TAU MU Cr RHOm ALPHA K A Vf RHOc T L LAMBDA;
 TAU = 10;
 MU = 80;
 Cr = 2000;
@@ -52,7 +52,7 @@ for k=1:120
     [qi, rho(1,k+1)] = nextrho(rho(1,k), q0, 0, v(1, k));
     v(1, k+1) = nextv(v(1, k), v(1,k), rho(1+1, k), rho(1, k), 120);
 
-    for i=2:4;
+    for i=2:4
         [qi, rho(i,k+1)] = nextrho(rho(i,k), qi, 0, v(i, k));
         v(i, k+1) = nextv(v(i, k), v(i-1,k), rho(i+1, k), rho(i, k), 120);
     end
