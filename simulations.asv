@@ -22,20 +22,20 @@ LAMBDA = 3; % [lanes]
 Dr = 1500;
 
 % functions
-% function [qi, rhonext] = nextrho(rhoi, qprev, qr, vi)
-%     global LAMBDA T L RHOc;
-%     qi = LAMBDA*rhoi*vi;
-%     rhonext = min([rhoi + (T/(LAMBDA*L))*(qprev - qi + qr) RHOc]);
-% end
-% 
-% 
-% function vnext = nextv(vi, vprev, rhonext, rhoi, VSL)
-%     global ALPHA Vf A RHOc T TAU L MU K;
-%     Vi = min([(1+ALPHA)*VSL; Vf*exp((-1/A)*(rhoi/RHOc)^A)]);
-%     posterm = vi + (T/TAU)*(Vi - vi) + (T/L)*vi*(vprev - vi);
-%     negterm = ((MU * T * (rhonext - rhoi))/(TAU * L * (rhoi + K)));
-%     vnext = posterm - negterm;
-% end
+function [qi, rhonext] = nextrho(rhoi, qprev, qr, vi)
+    global LAMBDA T L RHOc;
+    qi = LAMBDA*rhoi*vi;
+    rhonext = min([rhoi + (T/(LAMBDA*L))*(qprev - qi + qr) RHOc]);
+end
+
+
+function vnext = nextv(vi, vprev, rhonext, rhoi, VSL)
+    global ALPHA Vf A RHOc T TAU L MU K;
+    Vi = min([(1+ALPHA)*VSL; Vf*exp((-1/A)*(rhoi/RHOc)^A)]);
+    posterm = vi + (T/TAU)*(Vi - vi) + (T/L)*vi*(vprev - vi);
+    negterm = ((MU * T * (rhonext - rhoi))/(TAU * L * (rhoi + K)));
+    vnext = posterm - negterm;
+end
 
 % Simulation
 rho = zeros(5,  120);
@@ -69,7 +69,7 @@ for k=1:120
 end
 
  
-
+%%
 %plotting
 figure()
 title('Velocity')
@@ -99,12 +99,6 @@ ylabel('Total time spent')
 hold on
 plot(TTS)
 
-figure()
-title('VSL')
-xlabel('Time')
-ylabel('Speed Limit')
-hold on
-plot(VSL_min(1,:))
 
 %% Plot Q5
 figure()

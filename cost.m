@@ -43,11 +43,14 @@ ub(1,:) = 120*ub(1,:);
 Xbar = fmincon(@costfunc2,z,[],[],[],[],lb,ub);
 
 %% Q8
-z=ones(2,120);
-z(1,:)=80*z(1,:);
-lb = 60*ones(2,120);
-lb(2,:) = 0*lb(1,:);
-ub = ones(2,120);
-ub(1,:) = 120*ub(1,:);
 
-Hbar = ga(@costfunc2,240,[],[],[],[],lb,ub);
+lb = ones(1,240);
+ub = 4*ones(1,240);
+Hbar = ga(@costfunc3,240,[],[],[],[],lb,ub,[],1:240);
+
+for i=1:120
+    Xbar(1,i) = 40+20*Hbar(i);
+    Xbar(2, i) = Hbar(2*i)/5;
+end
+    
+
