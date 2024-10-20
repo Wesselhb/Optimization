@@ -1,6 +1,7 @@
 % Student dependent variables
 Da = [4 6 5];
 Db = [1 8 8];
+global E2 E3
 E1 = Da(1) + Db(1);
 E2 = Da(2) + Db(2);
 E3 = Da(3) + Db(3);
@@ -21,22 +22,32 @@ L = 1; % [km]
 LAMBDA = 3; % [lanes]
 Dr = 1500;
 
-function f=costfunc(V_SL)
+z=1:120;
+lb = 60*ones(1,120);
+ub = 120*ones(1,120);
+
+x = fmincon(@costfunc2,z,[],[],[],[],lb,ub);
+
+
+
+function f=costfunc2(V_SL)
+
+global LAMBDA T L RHOc Vf A TAU MU K ALPHA E2 E3 Cr Dr RHOm;
+
     % functions
         function [qi, rhonext] = nextrho(rhoi, qprev, qr, vi)
-            global LAMBDA T L RHOc;
             qi = LAMBDA*rhoi*vi;
             rhonext = min([rhoi + (T/(LAMBDA*L))*(qprev - qi + qr) RHOc]);
         end
     
     
         function vnext = nextv(vi, vprev, rhonext, rhoi, VSL)
-            global ALPHA Vf A RHOc T TAU L MU K;
             Vi = min([(1+ALPHA)*VSL; Vf*exp((-1/A)*(rhoi/RHOc)^A)]);
             posterm = vi + (T/TAU)*(Vi - vi) + (T/L)*vi*(vprev - vi);
             negterm = ((MU * T * (rhonext - rhoi))/(TAU * L * (rhoi + K)));
             vnext = posterm - negterm;
         end
+
     
     % Simulation
     rho = zeros(5, 120);
@@ -67,7 +78,5 @@ function f=costfunc(V_SL)
         [~, rho(5,k+1)] = nextrho(rho(5,k), qi, 0, v(5, k));
         v(5, k+1) = nextv(v(5, k), v(5-1,k), rho(5, k), rho(5,k), 120);
     end
-    f = T*sum(omega) + T*L*LAMBDA*(sum(rho));
-
+     f = T*sum(omega) + T*L*LAMBDA*(sum(sum(rho)));
 end
-       
