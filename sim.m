@@ -22,23 +22,23 @@ LAMBDA = 3; % [lanes]
 Dr = 1500;
 
 % functions
-function [qi, rhonext] = nextrho(rhoi, qprev, qr, vi)
-    global LAMBDA T L RHOc;
-    qi = LAMBDA*rhoi*vi;
-    rhonext = min([rhoi + (T/(LAMBDA*L))*(qprev - qi + qr) RHOc]);
-end
-
-
-function vnext = nextv(vi, vprev, rhonext, rhoi, VSL)
-    global ALPHA Vf A RHOc T TAU L MU K;
-    Vi = min([(1+ALPHA)*VSL; Vf*exp((-1/A)*(rhoi/RHOc)^A)]);
-    posterm = vi + (T/TAU)*(Vi - vi) + (T/L)*vi*(vprev - vi);
-    negterm = ((MU * T * (rhonext - rhoi))/(TAU * L * (rhoi + K)));
-    vnext = posterm - negterm;
-end
+% function [qi, rhonext] = nextrho(rhoi, qprev, qr, vi)
+%     global LAMBDA T L RHOc;
+%     qi = LAMBDA*rhoi*vi;
+%     rhonext = min([rhoi + (T/(LAMBDA*L))*(qprev - qi + qr) RHOc]);
+% end
+% 
+% 
+% function vnext = nextv(vi, vprev, rhonext, rhoi, VSL)
+%     global ALPHA Vf A RHOc T TAU L MU K;
+%     Vi = min([(1+ALPHA)*VSL; Vf*exp((-1/A)*(rhoi/RHOc)^A)]);
+%     posterm = vi + (T/TAU)*(Vi - vi) + (T/L)*vi*(vprev - vi);
+%     negterm = ((MU * T * (rhonext - rhoi))/(TAU * L * (rhoi + K)));
+%     vnext = posterm - negterm;
+% end
 
 % Simulation
-rho = zeros(5, 120);
+rho = zeros(5,  120);
 v = zeros(5, 120);
 omega = zeros(1,120);
 rho(:,1) = 30 * ones(5,1);
@@ -56,16 +56,19 @@ for k=1:120
 
     for i=2:3
         [qi, rho(i,k+1)] = nextrho(rho(i,k), qi, 0, v(i, k));
-        v(i, k+1) = nextv(v(i, k), v(i-1,k), rho(i+1, k), rho(i, k), 120);
+        v(i, k+1) = nextv(v(i, k), v(i-1,k), rho(i+1, k), rho(i, k), Xbar(1,k));
     end
-    rx = 1;
-    qr = min([rx*Cr; Dr+omega(k)/T; Cr*(RHOm - rho(4,k)/(RHOm-RHOc))]);
+    
+    qr = min([Xbar(2,k)*Cr; Dr+omega(k)/T; Cr*(RHOm - rho(4,k)/(RHOm-RHOc))]);
     omega(k+1) = omega(k) + T*(Dr - qr);
     [qi, rho(4, k+1)] = nextrho(rho(4,k), qi, qr, v(4, k));
     v(4, k+1) = nextv(v(4, k), v(3,k), rho(5,k), rho(4, k), 120);
     [~, rho(5,k+1)] = nextrho(rho(5,k), qi, 0, v(5, k));
     v(5, k+1) = nextv(v(5, k), v(5-1,k), rho(5, k), rho(5,k), 120);
-    end
+    TTS(1,k) = T*omega(k) + T*L*LAMBDA*(sum(rho(:,k)));
+end
+
+ 
 
 %plotting
 figure()
@@ -88,3 +91,33 @@ for i=1:5
     plot(rho(i,:))
 end
 legend('Segment 1', 'Segment 2', 'Segment 3', 'Segment 4', 'Segment 5')
+%% Plot Q4
+figure()
+title('TTS')
+xlabel('Time')
+ylabel('Total time spent')
+hold on
+plot(TTS)
+
+figure()
+title('VSL')
+xlabel('Time')
+ylabel('Speed Limit')
+hold on
+plot(VSL_min(1,:))
+
+%% Plot Q5
+figure()
+title('VSL')
+xlabel('Time')
+ylabel('Speed Limit')
+hold on
+plot(Xbar(1,:))
+
+figure()
+title('ramp metering rate applied at time step k')
+xlabel('Time')
+ylabel('Ramp metering rate')
+hold on
+plot(Xbar(2,:))
+
