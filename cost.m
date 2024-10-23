@@ -21,26 +21,27 @@ T = 10/3600; % [hr]
 L = 1; % [km]
 LAMBDA = 3; % [lanes]
 Dr = 1500;
+
+options = optimoptions('fmincon', 'Algorithm', 'sqp', 'MaxFunctionEvaluations', 3e4);
 %% Q4
 z=ones(2,120);
-z(1,:)=80*z(1,:);
-lb = 60*ones(2,120);
-lb(2,:) = 1*lb(1,:);
+z(1,:)=60*z(1,:);
+lb = ones(2,120);
+lb(1,:) = 60*lb(1,:);
 ub = ones(2,120);
 ub(1,:) = 120*ub(1,:);
 
-VSL_min = fmincon(@costfunc2,z,[],[],[],[],lb,ub);
+Xbar = fmincon(@costfunc2,z,[],[],[],[],lb,ub,[],options);
 
 
 %% Q5
 z=ones(2,120);
-z(1,:)=80*z(1,:);
+z(1,:)=120*z(1,:);
 lb = 60*ones(2,120);
 lb(2,:) = 0*lb(1,:);
 ub = ones(2,120);
 ub(1,:) = 120*ub(1,:);
-
-Xbar = fmincon(@costfunc2,z,[],[],[],[],lb,ub);
+Xbar = fmincon(@costfunc2,z,[],[],[],[],lb,ub,[], options);
 
 %% Q8
 
@@ -53,4 +54,3 @@ for i=1:120
     Xbar(2, i) = Hbar(2*i)/5;
 end
     
-
