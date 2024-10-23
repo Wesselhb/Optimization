@@ -21,22 +21,6 @@ L = 1; % [km]
 LAMBDA = 3; % [lanes]
 Dr = 1500;
 
-% functions
-function [qi, rhonext] = nextrho(rhoi, qprev, qr, vi)
-    global LAMBDA T L RHOc;
-    qi = LAMBDA*rhoi*vi;
-    rhonext = min([rhoi + (T/(LAMBDA*L))*(qprev - qi + qr) RHOc]);
-end
-
-
-function vnext = nextv(vi, vprev, rhonext, rhoi, VSL)
-    global ALPHA Vf A RHOc T TAU L MU K;
-    Vi = min([(1+ALPHA)*VSL; Vf*exp((-1/A)*(rhoi/RHOc)^A)]);
-    posterm = vi + (T/TAU)*(Vi - vi) + (T/L)*vi*(vprev - vi);
-    negterm = ((MU * T * (rhonext - rhoi))/(TAU * L * (rhoi + K)));
-    vnext = posterm - negterm;
-end
-
 % Simulation
 rho = zeros(5,  120);
 v = zeros(5, 120);
@@ -46,7 +30,7 @@ v(:,1) = 80 * ones(5,1);
 
 for k=1:120
     if k < 60
-        q0 = 7000 + 100*E2;
+        q0 = (7000 + 100*E2)*0.6;
     else
         q0 = 2000 + 100*E3;
     end
@@ -69,7 +53,7 @@ for k=1:120
 end
 
  
-%% plot 1
+
 %plotting
 figure()
 title('Velocity')
@@ -98,7 +82,6 @@ xlabel('Time')
 ylabel('Total time spent')
 hold on
 plot(TTS)
-
 
 %% Plot Q5
 figure()
