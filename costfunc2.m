@@ -2,27 +2,6 @@
 function f=costfunc2(X)
 
 global LAMBDA T L RHOc Vf A TAU MU K ALPHA E2 E3 Cr Dr RHOm;
-
-    % functions
-        function [qi, rhonext] = nextrho(rhoi, qprev, qr, vi)
-            global LAMBDA T L RHOc;
-            qi = LAMBDA*rhoi*vi; %calculate traffic flow for the current section, 
-            % q(i,k)=LAMDA(i) RHO(i,k) velocity(i,k)
-            rhonext = min([rhoi + (T/(LAMBDA*L))*(qprev - qi + qr) RHOc]); %calculate the traffic density for the next section 
-            % rho(i,k+1) = rho(i,k) + {T/LAMBDA(i)*L(i)}{q(i-1,k)-q(i,k)+qr(i,k)}
-            %if rho(i,k+1)>then the critical density RHOc then rho(i,k+1)=RHOc
-        end
-            
-    
-        function vnext = nextv(vi, vprev, rhonext, rhoi, VSL)
-            global ALPHA Vf A RHOc T TAU L MU K;
-            Vi = min([(1+ALPHA)*VSL; Vf*exp((-1/A)*(rhoi/RHOc)^A)]); %calculate the velocity for the section
-            %V(i,k) = min([(1+ALPHA)*VSL(i,k); Vf*exp((-1/A)*(rho(i,k)/RHOc)^A)])
-            posterm = vi + (T/TAU)*(Vi - vi) + (T/L)*vi*(vprev - vi);
-            negterm = ((MU * T * (rhonext - rhoi))/(TAU * L * (rhoi + K)));
-            vnext = posterm - negterm; %calculate v(i,k+1)
-        end
-
     
     % Simulation
     rho = zeros(5, 120); %create a zero matrix for traffic denisty(RHO) with size [i,k]
