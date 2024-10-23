@@ -26,12 +26,12 @@ global LAMBDA T L RHOc Vf A TAU MU K ALPHA E2 E3 Cr Dr RHOm;
     
     for k=1:120
         if k < 60
-            q0 = 7000 + 100*E2;
+            q0 = 0.6*(7000 + 100*E2);
         else
             q0 = 2000 + 100*E3;
         end
     
-        [qi, rho(1,k+1)] = nextrho(rho(1,k), q0, 0, v(1, k));
+        [qi, rho(1,k+1)] = nextrho(rho(1,k), q0, 0, v(1, k)); 
         v(1, k+1) = nextv(v(1, k), v(1,k), rho(1+1, k), rho(1, k), 120);
     
         for i=2:3
